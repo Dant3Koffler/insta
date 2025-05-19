@@ -1,0 +1,238 @@
+/* CRITICAL 8-BIT FONT FIXES */
+* {
+    -webkit-font-smoothing: none !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    font-smooth: never !important;
+    text-rendering: geometricPrecision !important;
+}
+
+html, body, html body {
+    font-family: 'Press Start 2P', monospace !important;
+    font-weight: normal !important;
+    image-rendering: pixelated !important;
+    text-shadow: 1px 1px 0 #000 !important;
+}
+
+/* Force all text to be pixel font */
+div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, select, textarea {
+    font-family: 'Press Start 2P', monospace !important;
+    letter-spacing: 0 !important;
+    font-weight: normal !important;
+    text-transform: uppercase !important;
+}
+
+/* Size adjustments for pixel fonts */
+.token-name, .card-title, .platform-label {
+    font-size: 8px !important;
+}
+
+.stat-label, .token-symbol, .token-link, .price-now, .price-change {
+    font-size: 7px !important;
+    font-family: 'Silkscreen', monospace !important;
+    padding: 2px !important;
+}
+
+.stat-value, .timestamp {
+    font-size: 9px !important;
+    font-family: 'Silkscreen', monospace !important;
+}
+
+/* Big main title */
+.eight-bit-title {
+    font-size: 22px !important;
+    line-height: 1.3 !important;
+    margin: 20px 0 !important;
+    padding: 10px !important;
+    text-shadow: 3px 3px 0 #000 !important;
+}
+
+/* Pixel borders */
+.token-card, .carousel-card {
+    border: 4px solid black !important;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.5) !important;
+    border-radius: 0 !important;
+}
+
+/* Pixel buttons */
+.token-link, .tech-tag {
+    border: 3px solid black !important;
+    border-radius: 0 !important;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.6) !important;
+    transition: all 0.1s !important;
+    transform: none !important;
+}
+
+.token-link:hover, .tech-tag:hover {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.6) !important;
+}
+
+/* 8-bit style overrides */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Press Start 2P', 'VT323', monospace !important;
+    line-height: 1.4 !important;
+    font-size: smaller !important;
+}
+
+/* Smaller main title for better 8-bit look */
+.eight-bit-title {
+    font-size: 20px !important;
+    padding: 20px 0 !important;
+    letter-spacing: 0 !important; /* No letter spacing for pixel fonts */
+    text-shadow: 3px 3px 0 #000 !important;
+    text-transform: uppercase !important;
+}
+
+/* Force true pixel fonts */
+.token-name, .card-title {
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 70% !important;
+    word-spacing: -0.3em !important;
+}
+
+.platform-label, .stat-label, .token-symbol {
+    font-family: 'Silkscreen', monospace !important;
+    font-size: 75% !important;
+}
+
+button, a, .token-link, .tech-tag, .timestamp {
+    font-family: 'Silkscreen', 'VT323', monospace !important;
+    letter-spacing: 0 !important;
+    font-size: 80% !important;
+}
+
+/* More pixelated look for cards */
+.token-card, .carousel-card {
+    image-rendering: pixelated !important;
+    transform: scale(1) !important;
+}
+
+/* Added pixelation to images */
+img {
+    image-rendering: pixelated !important;
+}
+
+/* Add pixelated corners to elements */
+.token-card::after, .carousel-card::after,
+.token-link::after, .tech-tag::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    z-index: -1;
+    background: transparent;
+    border: 4px solid var(--border-color);
+    pointer-events: none;
+}
+
+/* Remove any before/after pseudo-elements that might be creating the grid */
+body:before, body:after,
+html:before, html:after,
+.container:before, .container:after,
+#root:before, #root:after,
+div:before, div:after {
+    display: none !important;
+    background: none !important;
+    background-image: none !important;
+    content: none !important;
+    opacity: 0 !important;
+}
+
+/* Add back our own grid if needed */
+.custom-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Adjust carousel card layout to be in a straight line */
+.carousel-card {
+    margin: 0 5px !important; /* Very small side margins */
+    transform: none !important; /* Remove all transforms */
+    opacity: 1 !important; /* Make all cards fully visible */
+    filter: none !important; /* Remove any filters */
+    width: 260px !important; /* Make cards narrower */
+    max-width: 260px !important;
+}
+
+/* Ensure perspective is maintained */
+.carousel-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    perspective: initial;
+}
+
+.carousel-track {
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
+    transform-style: flat;
+}
+
+/* Style active card */
+.carousel-card.is-active {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 25px var(--glow-primary) !important;
+    z-index: 10 !important;
+    transform: scale(1.05) !important; /* Just slightly larger */
+}
+
+/* Remove rotations */
+.carousel-card.is-prev,
+.carousel-card.is-next,
+.carousel-card.is-far-prev,
+.carousel-card.is-far-next {
+    transform: none !important;
+    opacity: 0.9 !important; /* Slightly less visible */
+}
+
+/* Hide the navigation buttons since cards will be in a row now */
+.carousel-button {
+    display: none !important;
+}
+
+/* Make indicators smaller */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 5px !important;
+    margin-top: 1rem !important;
+}
+
+.indicator {
+    width: 15px !important;
+    height: 3px !important;
+}
+
+/* Version 1.2 - Force 4 column layout */
+/* Force row-based layout for tokens */
+.token-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    width: 1000px !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+.token-card {
+    flex: 0 0 auto !important;
+    width: 220px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 10px 5px !important;
+    box-sizing: border-box !important;
+} 

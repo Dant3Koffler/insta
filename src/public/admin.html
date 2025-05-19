@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Admin Console</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon (2).png">
+    <link rel="shortcut icon" type="image/png" href="favicon (2).png">
+    
+    <!-- Pixel fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+        
+        :root {
+            --primary-color: #ff417a;
+            --secondary-color: #ff7642;
+            --accent-color: #ffcb42;
+            --dark-color: #1a1a1a;
+            --text-color: #ffffff;
+            --error-color: #ff3366;
+            --success-color: #32cd32;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'VT323', monospace;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            image-rendering: pixelated;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(0, 0, 0, 0.85);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .header {
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.6);
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .header h1 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 24px;
+            color: var(--text-color);
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+            margin: 0;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .login-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .login-prompt {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .password-input {
+            width: 220px;
+            padding: 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 3px solid var(--primary-color);
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-align: center;
+            outline: none;
+        }
+        
+        .password-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 203, 66, 0.4);
+        }
+        
+        .login-button {
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            background-color: var(--primary-color);
+            border: 3px solid #000;
+            color: var(--text-color);
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.1s;
+        }
+        
+        .login-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+            visibility: hidden;
+        }
+        
+        .token-form {
+            display: none;
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--primary-color);
+            color: var(--text-color);
+            outline: none;
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 203, 66, 0.2);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--primary-color);
+            color: var(--text-color);
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .form-select option {
+            background-color: #121212;
+            color: var(--text-color);
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 150px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 2px dashed var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .upload-button {
+            padding: 8px 15px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            background-color: var(--secondary-color);
+            border: 2px solid #000;
+            color: var(--text-color);
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .upload-button:hover {
+            background-color: var(--primary-color);
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .submit-button {
+            padding: 12px 24px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            border: 3px solid #000;
+            color: var(--text-color);
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.1s;
+            display: block;
+            margin: 30px auto 0;
+        }
+        
+        .submit-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .submit-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 10;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            border: 2px solid var(--primary-color);
+            text-shadow: 1px 1px 0px #000;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+            border: 2px solid;
+        }
+        
+        .success {
+            border-color: var(--success-color);
+            color: var(--success-color);
+            background-color: rgba(50, 205, 50, 0.1);
+        }
+        
+        .error {
+            border-color: var(--error-color);
+            color: var(--error-color);
+            background-color: rgba(255, 51, 102, 0.1);
+        }
+        
+        /* Token Management Styles */
+        .token-management {
+            margin-top: 40px;
+            border-top: 2px solid var(--primary-color);
+            padding-top: 30px;
+        }
+        
+        .section-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .token-list-container {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .management-button {
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            background-color: var(--primary-color);
+            border: 2px solid #000;
+            color: var(--text-color);
+            cursor: pointer;
+            margin-bottom: 15px;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .management-button:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .management-button:active {
+            transform: translate(3px, 3px);
+            box-shadow: none;
+        }
+        
+        .token-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .token-item {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--secondary-color);
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .token-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .token-name-ticker {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .token-platform {
+            font-family: 'Silkscreen', monospace;
+            font-size: 10px;
+            color: var(--accent-color);
+        }
+        
+        .delete-token-button {
+            padding: 6px 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            background-color: var(--error-color);
+            border: 2px solid #000;
+            color: var(--text-color);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .delete-token-button:hover {
+            filter: brightness(1.2);
+        }
+        
+        .token-empty {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">back to home</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>ADMIN CONSOLE</h1>
+        </div>
+        
+        <div class="main-content">
+            <div id="login-screen" class="login-screen">
+                <div class="login-prompt">ENTER PASSWORD:</div>
+                <input type="password" id="password-input" class="password-input" maxlength="20">
+                <div>
+                    <button id="login-button" class="login-button">LOGIN</button>
+                </div>
+                <div id="error-message" class="error-message">INCORRECT PASSWORD</div>
+            </div>
+            
+            <div id="token-form" class="token-form">
+                <div class="form-group">
+                    <label for="platform" class="form-label">PLATFORM:</label>
+                    <select id="platform" class="form-select">
+                        <option value="instagram">INSTAGRAM</option>
+                        <option value="twitter">X (TWITTER)</option>
+                        <option value="tiktok">TIKTOK</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name" class="form-label">TOKEN NAME:</label>
+                    <input type="text" id="name" class="form-input" placeholder="Enter token name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ticker" class="form-label">TOKEN TICKER:</label>
+                    <input type="text" id="ticker" class="form-input" placeholder="Enter token ticker (e.g. $INSTA)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-url" class="form-label">POST URL:</label>
+                    <input type="text" id="post-url" class="form-input" placeholder="Enter post URL">
+                </div>
+                
+                <div class="form-group">
+                    <label for="pumpfun-url" class="form-label">PUMP.FUN URL:</label>
+                    <input type="text" id="pumpfun-url" class="form-input" placeholder="Enter pump.fun URL">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">TOKEN IMAGE:</label>
+                    <div id="image-preview" class="image-preview">
+                        <span>No image selected</span>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*">
+                    <button id="upload-button" class="upload-button">UPLOAD IMAGE</button>
+                </div>
+                
+                <button id="submit-button" class="submit-button">PUSH TOKEN</button>
+                
+                <div id="status-message" class="status-message"></div>
+                
+                <div class="token-management">
+                    <h2 class="section-title">MANAGE TOKENS</h2>
+                    <div class="token-list-container">
+                        <button id="load-tokens-button" class="management-button">LOAD TOKENS</button>
+                        <div id="token-list" class="token-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password-input');
+            const loginButton = document.getElementById('login-button');
+            const errorMessage = document.getElementById('error-message');
+            const loginScreen = document.getElementById('login-screen');
+            const tokenForm = document.getElementById('token-form');
+            const fileInput = document.getElementById('file-input');
+            const uploadButton = document.getElementById('upload-button');
+            const imagePreview = document.getElementById('image-preview');
+            const submitButton = document.getElementById('submit-button');
+            const statusMessage = document.getElementById('status-message');
+            
+            // Token management elements
+            const loadTokensButton = document.getElementById('load-tokens-button');
+            const tokenList = document.getElementById('token-list');
+            
+            // Socket.io connection for real-time updates
+            let socket;
+            try {
+                socket = io();
+                
+                socket.on('connect', () => {
+                    console.log('Connected to server');
+                });
+                
+                socket.on('disconnect', () => {
+                    console.log('Disconnected from server');
+                });
+            } catch (e) {
+                console.error('Error connecting to socket.io:', e);
+            }
+            
+            // Correct password
+            const correctPassword = 'Ali';
+            
+            // Focus password input on load
+            passwordInput.focus();
+            
+            // Login with Enter key
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            // Login button click
+            loginButton.addEventListener('click', checkPassword);
+            
+            // Check password function
+            function checkPassword() {
+                if (passwordInput.value === correctPassword) {
+                    // Correct password - show token form
+                    loginScreen.style.display = 'none';
+                    tokenForm.style.display = 'block';
+                } else {
+                    // Incorrect password
+                    errorMessage.style.visibility = 'visible';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                    
+                    // Shake animation effect
+                    passwordInput.classList.add('shake');
+                    setTimeout(() => {
+                        passwordInput.classList.remove('shake');
+                    }, 500);
+                }
+            }
+            
+            // Handle image upload button click
+            uploadButton.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function() {
+                const file = fileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Token Image Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Handle token submission
+            submitButton.addEventListener('click', function() {
+                const platform = document.getElementById('platform').value;
+                const name = document.getElementById('name').value;
+                const ticker = document.getElementById('ticker').value;
+                const postUrl = document.getElementById('post-url').value;
+                const pumpfunUrl = document.getElementById('pumpfun-url').value;
+                const imageFile = fileInput.files[0];
+                
+                // Validate inputs
+                if (!name || !ticker) {
+                    showStatus('Name and ticker are required!', 'error');
+                    return;
+                }
+                
+                // Process image (either use default platform logo or uploaded image)
+                let imageUrl;
+                
+                if (imageFile) {
+                    // Use the uploaded image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imageUrl = e.target.result;
+                        pushToken(platform, name, ticker, postUrl, pumpfunUrl, imageUrl);
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    // Use default platform logo
+                    switch(platform) {
+                        case 'instagram':
+                            imageUrl = 'images/instalogo.png';
+                            break;
+                        case 'twitter':
+                            imageUrl = 'images/xlogo.png';
+                            break;
+                        case 'tiktok':
+                            imageUrl = 'images/tiktoklogo.png';
+                            break;
+                    }
+                    pushToken(platform, name, ticker, postUrl, pumpfunUrl, imageUrl);
+                }
+            });
+            
+            // Function to push token to the home page
+            function pushToken(platform, name, ticker, postUrl, pumpfunUrl, imageUrl) {
+                // Use current timestamp in ISO format
+                const timestamp = new Date().toISOString();
+                
+                try {
+                    // Call the global detectNewToken function defined in index.html
+                    if (window.opener && window.opener.detectNewToken) {
+                        // If opened in a new window, call the parent window's function
+                        window.opener.detectNewToken(platform, name, ticker, imageUrl, postUrl, pumpfunUrl);
+                        showStatus('Token pushed successfully!', 'success');
+                        
+                        // Reset form
+                        document.getElementById('name').value = '';
+                        document.getElementById('ticker').value = '';
+                        document.getElementById('post-url').value = '';
+                        document.getElementById('pumpfun-url').value = '';
+                        imagePreview.innerHTML = '<span>No image selected</span>';
+                        fileInput.value = '';
+                    } else {
+                        // Using localStorage as a backup communication method
+                        const tokenData = {
+                            platform,
+                            name,
+                            symbol: ticker,
+                            image: imageUrl,
+                            postUrl,
+                            pumpfunUrl,
+                            timestamp
+                        };
+                        
+                        localStorage.setItem('newToken', JSON.stringify(tokenData));
+                        showStatus('Token saved! Refresh home page to see it.', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error pushing token:', error);
+                    showStatus('Error pushing token. Check console for details.', 'error');
+                }
+            }
+            
+            // Show status message
+            function showStatus(message, type) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message ' + type;
+                statusMessage.style.display = 'block';
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Load tokens from main window or server
+            loadTokensButton.addEventListener('click', function() {
+                // Clear the token list first
+                tokenList.innerHTML = '';
+                
+                // First try to get tokens from parent window
+                if (window.opener && window.opener.getAllTokens) {
+                    const allTokens = window.opener.getAllTokens();
+                    displayTokens(allTokens);
+                } else {
+                    // If no parent window, fetch tokens from the server
+                    fetch('/api/token-history')
+                        .then(response => response.json())
+                        .then(tokens => {
+                            if (tokens && tokens.length > 0) {
+                                displayTokens(tokens);
+                            } else {
+                                tokenList.innerHTML = '<div class="token-empty">No tokens found</div>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching tokens:', error);
+                            tokenList.innerHTML = '<div class="token-empty">Error fetching tokens. Please try again.</div>';
+                        });
+                }
+            });
+            
+            // Display tokens in the management section
+            function displayTokens(tokens) {
+                // Clear the token list first
+                tokenList.innerHTML = '';
+                
+                if (!tokens || tokens.length === 0) {
+                    tokenList.innerHTML = '<div class="token-empty">No tokens found</div>';
+                    return;
+                }
+                
+                // Create a token item for each token
+                tokens.forEach(token => {
+                    const tokenItem = document.createElement('div');
+                    tokenItem.className = 'token-item';
+                    tokenItem.dataset.tokenId = token.id;
+                    
+                    const tokenInfo = document.createElement('div');
+                    tokenInfo.className = 'token-info';
+                    
+                    const nameTickerElement = document.createElement('div');
+                    nameTickerElement.className = 'token-name-ticker';
+                    nameTickerElement.textContent = `${token.name} (${token.symbol || token.ticker})`;
+                    
+                    const platformElement = document.createElement('div');
+                    platformElement.className = 'token-platform';
+                    platformElement.textContent = token.platform ? token.platform.toUpperCase() : 'UNKNOWN';
+                    
+                    tokenInfo.appendChild(nameTickerElement);
+                    tokenInfo.appendChild(platformElement);
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-token-button';
+                    deleteButton.textContent = 'DELETE';
+                    deleteButton.addEventListener('click', () => {
+                        if (confirm(`Are you sure you want to delete ${token.name}?`)) {
+                            deleteToken(token.id);
+                        }
+                    });
+                    
+                    tokenItem.appendChild(tokenInfo);
+                    tokenItem.appendChild(deleteButton);
+                    
+                    tokenList.appendChild(tokenItem);
+                });
+            }
+            
+            // Delete a token
+            function deleteToken(tokenId) {
+                if (socket && socket.connected) {
+                    // Emit event to server to delete the token
+                    socket.emit('deleteToken', { tokenId });
+                    showStatus('Delete request sent. Refreshing tokens...', 'success');
+                    
+                    // Also try to delete in parent window if available
+                    if (window.opener && window.opener.deleteToken) {
+                        window.opener.deleteToken(tokenId);
+                    }
+                    
+                    // Remove from local list
+                    const tokenItem = tokenList.querySelector(`[data-token-id="${tokenId}"]`);
+                    if (tokenItem) {
+                        tokenItem.remove();
+                    }
+                    
+                    // Refresh the token list after a short delay
+                    setTimeout(() => {
+                        loadTokensButton.click();
+                    }, 1500);
+                } else {
+                    showStatus('Not connected to server. Cannot delete token.', 'error');
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

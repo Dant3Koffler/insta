@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="cache-control" content="max-age=0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="last-modified" content="Wed, 14 May 2025 07:00:00 GMT">
+    <meta name="description" content="Real-time monitoring of tokens created via Instagram mentions. Track new token launches and their performance.">
+    <title>INSTA MEME</title>
+    
+    <!-- Embed pixel fonts directly -->
+    <style>
+        /* Press Start 2P - THE classic pixel font */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        /* VT323 - Terminal style pixel font */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        
+        /* Silkscreen - Clean pixel font */
+        @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+        
+        /* Define color variables */
+        :root {
+            --primary-color: #ff417a;
+            --secondary-color: #ff7642;
+            --accent-color: #ffcb42;
+            
+            /* Platform Colors */
+            --instagram-color: #e1306c;
+            --instagram-gradient: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+            --twitter-color: #1DA1F2; 
+            --tiktok-color: #00f2ea;
+            --tiktok-alt-color: #ff0050;
+            --discord-color: #5865F2;
+        }
+        
+        /* Force 8-bit styles globally */
+        html, body {
+            background: linear-gradient(135deg, #ff417a, #ff7642, #ffcb42) !important;
+            background-attachment: fixed !important;
+            font-family: 'VT323', monospace !important;
+            image-rendering: pixelated !important;
+            -webkit-font-smoothing: none !important;
+        }
+        
+        /* Make 8-bit title */
+        .eight-bit-title {
+            font-family: 'Press Start 2P', monospace !important;
+            font-size: 20px !important;
+            color: white !important;
+            text-shadow: 3px 3px 0 black !important;
+            text-transform: uppercase !important;
+            line-height: 1.5 !important;
+            letter-spacing: 0 !important;
+            margin: 20px 0 5px !important;
+        }
+        
+        /* Subtitle styling */
+        .subtitle {
+            font-family: 'Silkscreen', monospace !important;
+            font-size: 12px !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            margin: 0 auto 20px !important;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color)) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            display: inline-block !important;
+            padding: 5px 15px !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 4px !important;
+            position: relative !important;
+            animation: glow 2s ease-in-out infinite alternate !important;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(255, 65, 122, 0.5);
+            }
+            to {
+                box-shadow: 0 0 15px rgba(255, 65, 122, 0.8);
+            }
+        }
+        
+        .subtitle::after {
+            content: "" !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.2) !important;
+            z-index: -1 !important;
+            border-radius: 2px !important;
+        }
+        
+        /* Apply 8-bit style to all text elements */
+        .pixel-text, .token-name, .stat-label, .card-title {
+            font-family: 'Press Start 2P', monospace !important;
+            font-size: 8px !important;
+            text-transform: uppercase !important;
+        }
+        
+        /* Smaller elements use more readable font */
+        .token-symbol, .stat-value, .timestamp {
+            font-family: 'Silkscreen', monospace !important;
+            font-size: 10px !important;
+        }
+        
+        /* Hide tokens initially */
+        .token-grid {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Make sure tokens display in rows of 4 */
+        @media (min-width: 1200px) {
+            .token-grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+            
+            .token-card {
+                flex: 0 0 calc(25% - 15px);
+                max-width: 280px;
+            }
+        }
+        
+        /* Deploy button styling */
+        .deploy-button {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ff417a;
+            color: white;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            padding: 10px;
+            border: 4px solid black;
+            box-shadow: 4px 4px 0 black;
+            cursor: pointer;
+            z-index: 100;
+            text-transform: uppercase;
+        }
+        
+        .deploy-button:hover {
+            background-color: #ffcb42;
+            transform: translateY(-50%) translateX(-2px) translateY(2px);
+            box-shadow: 2px 2px 0 black;
+        }
+        
+        /* 8-bit animation */
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        /* Fun deploy button animation */
+        .deploy-button {
+            position: relative;
+        }
+        
+        .deploy-button::after {
+            content: "";
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 2px dashed black;
+            animation: blink 2s infinite;
+            pointer-events: none;
+        }
+
+        /* Add a favicon */
+        link[rel="icon"] {
+            display: none;
+        }
+
+        /* Platform button styles */
+        .platform-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .platform-button {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            padding: 8px 12px;
+            border: 4px solid black;
+            cursor: pointer;
+            text-transform: uppercase;
+            image-rendering: pixelated;
+            box-shadow: 4px 4px 0 black;
+            transition: all 0.1s;
+        }
+        
+        .platform-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 black;
+        }
+        
+        .platform-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+        
+        /* Platform-specific styles */
+        .instagram-button {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+        }
+        
+        .twitter-button {
+            background-color: #000000;
+            color: white;
+        }
+        
+        .tiktok-button {
+            background: linear-gradient(90deg, #25F4EE, #FE2C55, #000000);
+            color: white;
+        }
+        
+        .discord-button {
+            background-color: #5865F2;
+            color: white;
+        }
+
+        /* Token Guide Panel */
+        .token-guide-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background-color: rgba(0,0,0,0.9);
+            border: 4px solid white;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.7);
+            z-index: 150;
+            padding: 20px;
+            border-radius: 2px;
+        }
+        
+        .token-guide-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 black;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+            letter-spacing: 1px;
+        }
+        
+        .guide-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .guide-button {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            padding: 15px 10px 12px;
+            border: 3px solid black;
+            cursor: pointer;
+            text-transform: uppercase;
+            image-rendering: pixelated;
+            box-shadow: 4px 4px 0 black;
+            transition: all 0.15s;
+            text-align: center;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+        }
+        
+        .logo-container {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo-img {
+            max-width: 90%;
+            max-height: 50px;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+        
+        /* Platform-specific logo adjustments */
+        .twitter-button .logo-img {
+            max-height: 40px;
+            filter: brightness(10); /* Make X logo white */
+        }
+        
+        .discord-button .logo-img {
+            max-height: 45px;
+            filter: brightness(1.1); /* Slightly brighten Discord logo */
+        }
+        
+        .guide-button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .guide-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 black;
+            filter: brightness(1.2);
+        }
+        
+        .guide-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+
+        /* How To modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #121212;
+            border: 4px solid white;
+            width: 90%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+        }
+        
+        .modal-header {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 26px;
+            color: white;
+            margin-bottom: 25px;
+            text-align: center;
+            text-transform: uppercase;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #444;
+            letter-spacing: 2px;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 24px;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 210;
+        }
+        
+        .platform-section {
+            margin-bottom: 25px;
+            padding: 25px;
+            border: 2px solid #e1306c;
+            background-color: #1a1a1a;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .platform-section h3 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 22px;
+            color: #e1306c;
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        
+        .platform-section p {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            color: #DDD;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .platform-section ul {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            color: #DDD;
+            padding-left: 25px;
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+        
+        .platform-section li {
+            margin-bottom: 16px;
+            position: relative;
+            padding-left: 25px;
+            line-height: 1.7;
+        }
+        
+        .platform-section li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #e1306c;
+            font-size: 20px;
+        }
+        
+        .instagram-section {
+            border-color: #e1306c;
+        }
+        
+        .instagram-section h3 {
+            color: #e1306c;
+        }
+        
+        .twitter-section {
+            border-color: #1DA1F2;
+        }
+        
+        .twitter-section h3 {
+            color: #1DA1F2;
+        }
+        
+        .tiktok-section {
+            border-color: #25F4EE;
+        }
+        
+        .tiktok-section h3 {
+            color: #25F4EE;
+        }
+        
+        .discord-section {
+            border-color: #5865F2;
+        }
+        
+        .discord-section h3 {
+            color: #5865F2;
+        }
+        
+        /* Add a border to the modal content area */
+        .platform-section::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid;
+            pointer-events: none;
+            border-color: inherit;
+        }
+
+        /* Amber Character Styles */
+        .amber-container {
+            position: fixed;
+            left: 20px;
+            bottom: 0;
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .amber-image {
+            width: 240px;
+            height: auto;
+            image-rendering: pixelated;
+            filter: drop-shadow(5px 5px 0 rgba(0,0,0,0.5));
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .amber-frame1 {
+            display: block;
+        }
+        
+        .amber-frame2 {
+            display: none;
+        }
+        
+        .amber-container:hover .amber-frame1 {
+            display: none;
+        }
+        
+        .amber-container:hover .amber-frame2 {
+            display: block;
+        }
+        
+        .amber-bubble {
+            position: absolute;
+            top: -40px;
+            left: 100px;
+            background-color: white;
+            border: 3px solid black;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            color: black;
+            white-space: nowrap;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+        }
+        
+        .amber-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .bounce {
+            animation: bounce 1.2s infinite;
+            display: inline-block;
+        }
+
+        /* TikTok emulation styles */
+        .tiktok-player {
+            display: none;
+            width: 360px;
+            height: 700px;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            z-index: 201;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tiktok-player img.video-content {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+            object-position: 25% 20%;
+            transform: scale(1.4);
+            transform-origin: 25% 20%;
+        }
+        
+        .tiktok-sound-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #FFF;
+        }
+        
+        .tiktok-content {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            align-items: flex-end;
+            color: #FFF;
+        }
+        
+        .tiktok-meta {
+            width: 100%;
+            padding: 15px;
+        }
+        
+        .tiktok-brand {
+            font-weight: 500;
+            margin: 0;
+            text-decoration: underline;
+        }
+        
+        .tiktok-sound {
+            margin-top: 3px;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        
+        .tiktok-message {
+            margin-top: 6px;
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+        
+        .tiktok-sidebar {
+            padding: 15px;
+            text-align: center;
+            line-height: 1;
+            display: grid;
+            grid-auto-flow: row;
+            grid-row-gap: 15px;
+        }
+        
+        .tiktok-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: block;
+            border: 2px solid #fff;
+        }
+        
+        .tiktok-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+            opacity: 0.9;
+        }
+        
+        .tiktok-count {
+            font-size: 12px;
+            margin: 0;
+        }
+        
+        .tiktok-record {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin 3s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Position the TikTok player when modal is open */
+        #tiktokModal.modal[style*="display: flex"] ~ .tiktok-player {
+            display: block;
+            left: calc(50% - 750px); /* Moved further left from -650px to -750px */
+        }
+
+        /* TikTok modal specific styles */
+        #tiktokModal .modal-content {
+            margin: 0 auto; /* Center the modal content */
+            max-width: 600px; /* Reduced from 700px for better centering */
+            margin-left: 50%; /* Position at the center */
+            transform: translateX(-50%); /* Center horizontally */
+        }
+
+        .sound-link {
+            display: inline-block;
+            background-color: #25F4EE;
+            padding: 3px 8px;
+            border-radius: 0px;
+            color: black !important;
+            text-decoration: none !important;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            margin: 5px 0;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            border: 1px solid white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .sound-link:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .sound-link::after {
+            content: "🔊";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        /* Add additional styles for the center title container */
+        .center-title {
+            text-align: center !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        /* Instagram emulation styles */
+        .instagram-player {
+            display: none;
+            width: 420px;
+            max-width: 90vw;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            z-index: 201;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .instagram-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .instagram-profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .instagram-profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #e1306c;
+        }
+        
+        .instagram-username {
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .instagram-media {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .instagram-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .instagram-controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .instagram-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .instagram-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .instagram-caption {
+            color: #fff;
+            padding: 0 15px 15px;
+            font-size: 14px;
+        }
+        
+        .instagram-likes {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .instagram-text {
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+        
+        /* For mobile adjustments */
+        @media (max-width: 600px) {
+            .instagram-player,
+            .tiktok-player {
+                left: 50%;
+                transform: translate(-50%, -50%);
+                max-width: 85vw;
+                width: 360px;
+            }
+        }
+
+        /* Token Card Styles */
+        .token-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .token-card {
+            width: 250px;
+            background-color: #121212;
+            border: 3px solid;
+            overflow: hidden;
+            image-rendering: pixelated;
+            margin-bottom: 20px;
+        }
+        
+        /* Instagram Card Style */
+        .instagram-card {
+            border-color: var(--instagram-color);
+        }
+        
+        .instagram-card .platform-label {
+            color: var(--instagram-color);
+        }
+        
+        .instagram-card .token-symbol {
+            color: var(--instagram-color);
+        }
+        
+        .instagram-card .view-post-btn {
+            color: var(--instagram-color);
+            border-color: var(--instagram-color);
+        }
+        
+        .instagram-card .trade-btn {
+            background-color: var(--instagram-color);
+        }
+        
+        /* Twitter/X Card Style */
+        .twitter-card {
+            border-color: var(--twitter-color);
+        }
+        
+        .twitter-card .platform-label {
+            color: var(--twitter-color);
+        }
+        
+        .twitter-card .token-symbol {
+            color: var(--twitter-color);
+        }
+        
+        .twitter-card .view-post-btn {
+            color: var(--twitter-color);
+            border-color: var(--twitter-color);
+        }
+        
+        .twitter-card .trade-btn {
+            background-color: var(--twitter-color);
+        }
+        
+        /* TikTok Card Style */
+        .tiktok-card {
+            border-color: var(--tiktok-color);
+        }
+        
+        .tiktok-card .platform-label {
+            color: var(--tiktok-color);
+        }
+        
+        .tiktok-card .token-symbol {
+            color: var(--tiktok-color);
+        }
+        
+        .tiktok-card .view-post-btn {
+            color: var(--tiktok-color);
+            border-color: var(--tiktok-color);
+        }
+        
+        .tiktok-card .trade-btn {
+            background-color: var(--tiktok-alt-color);
+        }
+        
+        /* Card Sections */
+        .card-header {
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .platform-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .token-name {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            color: white;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .token-symbol-container {
+            background-color: #000;
+            border: 2px solid #333;
+            padding: 5px 0;
+            margin: 0 auto;
+            width: 70%;
+        }
+        
+        .token-symbol {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .card-image {
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #333;
+            border-bottom: 2px solid #333;
+        }
+        
+        .platform-icon {
+            width: 60px;
+            height: 60px;
+            image-rendering: pixelated;
+        }
+        
+        .card-footer {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .btn {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            padding: 8px 15px;
+            border: 2px solid;
+            background-color: transparent;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        .view-post-btn {
+            border-color: #333;
+            color: #fff;
+            background-color: #000;
+        }
+        
+        .trade-btn {
+            border: none;
+            color: white;
+        }
+        
+        .timestamp {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: #888;
+            text-align: center;
+        }
+
+        /* Make sure cards display in rows */
+        @media (min-width: 768px) {
+            .token-grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+            
+            .token-card {
+                flex: 0 0 calc(33.333% - 20px);
+                max-width: 250px;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .token-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .token-card {
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+    </style>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css?v=1.6">
+    <link rel="stylesheet" href="override.css?v=1.4">
+    
+    <!-- Inline favicon to prevent 404 -->
+    <link rel="icon" type="image/png" href="favicon (2).png">
+    <link rel="shortcut icon" type="image/png" href="favicon (2).png">
+</head>
+<body style="background: linear-gradient(135deg, #ff417a, #ff7642, #ffcb42) !important; background-attachment: fixed !important;">
+    <!-- 8-bit sound effect (embedded directly to avoid 404 errors) -->
+    <audio id="beepSound" style="display:none">
+        <source src="data:audio/mp3;base64,SUQzAwAAAAAAJlRQRTEAAAAcAAAAU291bmRKYXkuY29tIFNvdW5kIEVmZmVjdHMA//uSwAAAAAABLBQAAAL6QWkrNVUAAgE9n/S+AAhLSTEwMAAuMy45ADbA//7UsAAAAwkALQcAAAgAAC0AAAABECAAF7OhoAzA3GfCEg5jMzEgOIH//9RLEAAANCAtwAAAAgAAtAAAAA=" type="audio/mp3">
+    </audio>
+    
+    <div class="custom-grid"></div>
+    
+    <!-- Amber Character -->
+    <a href="blank.html" class="amber-container">
+        <div class="amber-bubble bounce">
+            Click to Talk to Amber!
+        </div>
+        <img src="images/frame1.png?v=2" alt="Amber" class="amber-image amber-frame1">
+        <img src="images/frame2.png?v=4" alt="Amber animated" class="amber-image amber-frame2">
+    </a>
+    
+    <!-- Token Guide Panel -->
+    <div class="token-guide-panel">
+        <div class="token-guide-title">HOW TO DEPLOY</div>
+        <div class="guide-buttons">
+            <button id="instagramGuideBtn" class="guide-button instagram-button">
+                <div class="logo-container">
+                    <img src="images/instalogo.png?v=2" alt="Instagram" class="logo-img">
+                </div>
+                <span>Instagram</span>
+            </button>
+            <button id="twitterGuideBtn" class="guide-button twitter-button">
+                <div class="logo-container">
+                    <img src="images/xlogo.png?v=2" alt="X" class="logo-img">
+                </div>
+                <span>X</span>
+            </button>
+            <button id="tiktokGuideBtn" class="guide-button tiktok-button">
+                <div class="logo-container">
+                    <img src="images/tiktoklogo.png?v=2" alt="TikTok" class="logo-img">
+                </div>
+                <span>TikTok</span>
+            </button>
+            <button id="discordGuideBtn" class="guide-button discord-button">
+                <div class="logo-container">
+                    <img src="images/discordlogo.png?v=2" alt="Discord" class="logo-img">
+                </div>
+                <span>Discord</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Instagram How To Modal -->
+    <div id="instagramModal" class="modal">
+        <div class="modal-content" style="background: #121212; padding: 0; border: 3px solid white; max-width: 900px;">
+            <button class="close-button close-modal">×</button>
+            <div class="modal-header" style="background: #121212; margin: 0; padding: 20px 0; text-align: center; border-bottom: 2px solid #333; font-size: 28px;">INSTAGRAM TOKEN GUIDE</div>
+            <div style="padding: 40px; color: white; font-family: 'Press Start 2P', monospace;">
+                <h3 style="color: #e1306c; margin-top: 0; margin-bottom: 25px; font-size: 20px;">INSTAGRAM TOKENS</h3>
+                
+                <p style="margin-bottom: 25px; font-size: 16px;">DEPLOY TOKENS ON INSTAGRAM BY FOLLOWING THESE STEPS:</p>
+                
+                <ul style="list-style-type: none; padding-left: 5px; margin-bottom: 35px;">
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #e1306c; font-size: 24px;">•</span>
+                        STEP 1: CREATE A PUBLIC INSTAGRAM POST USING ANY MEDIA.
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #e1306c; font-size: 24px;">•</span>
+                        STEP 2: IN THE CAPTION, INCLUDE THE FORMAT: <span style="color: #4db5f9; font-weight: bold;">@INSTADOTMEME</span> + NAME/TICKER
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #e1306c; font-size: 24px;">•</span>
+                        EXAMPLE: "<span style="color: #4db5f9; font-weight: bold;">@INSTADOTMEME</span> + INSTA.MEME/$INSTA"
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #e1306c; font-size: 24px;">•</span>
+                        STEP 3: THE AI SCANS PUBLIC CAPTIONS FOR THIS FORMAT.
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #e1306c; font-size: 24px;">•</span>
+                        STEP 4: ONCE DETECTED, YOUR TOKEN WILL BE GENERATED ON PUMP.FUN.
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #e1306c; font-size: 24px;">•</span>
+                        STEP 5: PROMOTE YOUR TOKEN TO BUILD TRACTION.
+                    </li>
+                </ul>
+                
+                <p style="font-size: 14px;">THIS FORMAT TELLS THE AI TO DEPLOY A TOKEN WITH THE SPECIFIED NAME AND TICKER. TOKENS WITH MORE ENGAGEMENT PERFORM BETTER IN THE MARKET.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instagram Post Emulation - Outside modal but only visible when modal is open -->
+    <div id="instagramPostPreview" style="display:none; position: fixed; top: 50%; left: 100px; transform: translateY(-50%); width: 380px; z-index: 201; background: #000; border-radius: 0; overflow: hidden; border: 3px solid #000; box-shadow: 4px 4px 0 rgba(0,0,0,0.8); font-family: 'Silkscreen', monospace;">
+        <div style="display: flex; align-items: center; padding: 12px; background-color: #000; border-bottom: 1px solid #333;">
+            <div style="color: #FFF; font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">INSTADOTMEME</div>
+        </div>
+        <div style="width: 100%; position: relative;">
+            <img src="images/casino.gif" alt="Casino gif" style="width: 100%; display: block; image-rendering: pixelated;">
+        </div>
+        <div style="display: flex; padding: 10px 12px; gap: 18px;">
+            <div style="color: #FF416F; font-size: 16px;">♥</div>
+            <div style="color: #FFF; font-size: 16px;">💬</div>
+            <div style="color: #FFF; font-size: 16px;">/</div>
+        </div>
+        <div style="padding: 0 12px 15px 12px; color: #fff;">
+            <div style="font-size: 14px; margin-bottom: 6px;">42,069 LIKES</div>
+            <div style="font-size: 14px; margin-bottom: 6px;">INSTADOTMEME</div>
+            <div style="font-size: 14px; line-height: 1.3; word-break: break-word;"><span style="color: #4db5f9;">@INSTADOTMEME</span> + INSTA/$INSTA</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="center-title">
+                <h1 class="eight-bit-title">INSTA MEME</h1>
+                <div class="subtitle">The First Multi-Platform Tokenization Service</div>
+            </div>
+        </header>
+        <div class="token-grid" id="tokenFeed">
+            <!-- Token cards will be added here dynamically in rows of 4 -->
+        </div>
+    </div>
+    
+    <!-- Twitter How To Modal -->
+    <div id="twitterModal" class="modal">
+        <div class="modal-content" style="background: #121212; padding: 0; border: 3px solid white; max-width: 900px;">
+            <button class="close-button close-modal">×</button>
+            <div class="modal-header" style="background: #121212; margin: 0; padding: 20px 0; text-align: center; border-bottom: 2px solid #333; font-size: 28px;">X (TWITTER) TOKEN GUIDE</div>
+            <div style="padding: 40px; color: white; font-family: 'Press Start 2P', monospace;">
+                <h3 style="color: #1DA1F2; margin-top: 0; margin-bottom: 25px; font-size: 20px;">HOW TO DEPLOY A TOKEN ON X</h3>
+                
+                <ul style="list-style-type: none; padding-left: 5px; margin-bottom: 35px;">
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #1DA1F2; font-size: 24px;">•</span>
+                        TWEET OUT <span style="color: #1DA1F2; font-weight: bold;">@AMBERDOTMEME</span> + NAME/TICKER
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #1DA1F2; font-size: 24px;">•</span>
+                        EXAMPLE: "<span style="color: #1DA1F2; font-weight: bold;">@AMBERDOTMEME</span> + INSTA/$INSTA"
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #1DA1F2; font-size: 24px;">•</span>
+                        ONCE DETECTED, YOUR TOKEN WILL BE GENERATED ON PUMP.FUN
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #1DA1F2; font-size: 24px;">•</span>
+                        PROMOTE YOUR TOKEN TO GAIN TRACTION
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Twitter Post Emulation - Outside modal but only visible when modal is open -->
+    <div id="twitterPostPreview" style="display:none; position: fixed; top: 50%; left: 100px; transform: translateY(-50%); width: 380px; z-index: 201; background: #000; border-radius: 0; overflow: hidden; border: 3px solid #000; box-shadow: 4px 4px 0 rgba(0,0,0,0.8); font-family: 'Silkscreen', monospace;">
+        <div style="display: flex; align-items: center; padding: 12px; background-color: #000; border-bottom: 1px solid #333;">
+            <div style="color: #FFF; font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">INSTADOTMEME</div>
+        </div>
+        <div style="width: 100%; position: relative; background: #111; padding: 12px;">
+            <div style="font-size: 14px; line-height: 1.5; color: #fff; word-break: break-word; margin-bottom: 15px;"><span style="color: #1DA1F2;">@AMBERDOTMEME</span> + INSTA/$INSTA</div>
+            <div style="display: flex; justify-content: space-between; color: #555; font-size: 12px;">
+                <div>4:20 PM · May 15, 2025</div>
+                <div>42.0K Likes</div>
+            </div>
+        </div>
+        <div style="display: flex; padding: 10px 12px; gap: 24px; border-top: 1px solid #333; justify-content: space-between;">
+            <div style="color: #555; font-size: 14px;">💬</div>
+            <div style="color: #555; font-size: 14px;">↺</div>
+            <div style="color: #FF416F; font-size: 14px;">♥</div>
+            <div style="color: #555; font-size: 14px;">↗</div>
+        </div>
+    </div>
+    
+    <!-- TikTok How To Modal -->
+    <div id="tiktokModal" class="modal">
+        <div class="modal-content">
+            <button class="close-button close-modal">×</button>
+            <div class="modal-header">TIKTOK TOKEN GUIDE</div>
+            <div class="platform-section tiktok-section">
+                <h3>HOW TO DEPLOY A TOKEN ON PUMP.FUN VIA TIKTOK</h3>
+                <ul>
+                    <li>STEP 1: CREATE A TIKTOK VIDEO USING THIS SOUND:</li>
+                    <li><a href="https://www.tiktok.com/music/original-sound-instadotmeme-7502290236177763118" target="_blank" class="sound-link">INSTADOTMEME SOUND</a></li>
+                    <li>STEP 2: IN THE CAPTION, TAG <span style="color: #25F4EE; font-weight: bold;">@INSTADOTMEME</span> AND ADD "NAME/TICKER"</li>
+                    <li>EXAMPLE: "<span style="color: #25F4EE; font-weight: bold;">@INSTADOTMEME</span> + INSTA.MEME/$INSTA"</li>
+                    <li>STEP 3: THE AI MONITORS VIDEOS USING THIS SOUND</li>
+                    <li>STEP 4: ONCE DETECTED, YOUR TOKEN WILL BE GENERATED ON PUMP.FUN</li>
+                    <li>STEP 5: PROMOTE YOUR TOKEN TO GAIN TRACTION</li>
+                </ul>
+                <p>USING THE OFFICIAL SOUND AND TAGGING FORMAT TELLS THE AI TO DEPLOY YOUR TOKEN.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Discord How To Modal -->
+    <div id="discordModal" class="modal">
+        <div class="modal-content" style="background: #121212; padding: 0; border: 3px solid white; max-width: 900px;">
+            <button class="close-button close-modal">×</button>
+            <div class="modal-header" style="background: #121212; margin: 0; padding: 20px 0; text-align: center; border-bottom: 2px solid #333; font-size: 28px;">DISCORD TOKEN GUIDE</div>
+            <div style="padding: 40px; color: white; font-family: 'Press Start 2P', monospace;">
+                <h3 style="color: #5865F2; margin-top: 0; margin-bottom: 25px; font-size: 20px;">DEPLOY TOKENS DIRECTLY THROUGH DISCORD</h3>
+                
+                <p style="margin-bottom: 25px; font-size: 16px;">WE OFFER A DISCORD BOT YOU CAN INVITE TO YOUR SERVER:</p>
+                
+                <ul style="list-style-type: none; padding-left: 5px; margin-bottom: 35px;">
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #5865F2; font-size: 24px;">•</span>
+                        STEP 1: INVITE <a href="https://discord.com/oauth2/authorize?client_id=1368806977211207711&permissions=377957640256&integration_type=0&scope=bot" target="_blank" style="color: #5865F2; font-weight: bold; text-decoration: none; font-size: 16px;">@INSTADOTMEME BOT</a> TO YOUR DISCORD SERVER
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #5865F2; font-size: 24px;">•</span>
+                        STEP 2: TYPE <span style="color: #5865F2; font-weight: bold;">/getkey</span> IN A PRIVATE CHANNEL TO RECEIVE YOUR PRIVATE KEY
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #5865F2; font-size: 24px;">•</span>
+                        STEP 3: DEPOSIT SOL TO THE WALLET ADDRESS PROVIDED BY THE BOT
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #5865F2; font-size: 24px;">•</span>
+                        STEP 4: USE <span style="color: #5865F2; font-weight: bold;">/deploy NAME TICKER</span> TO CREATE YOUR TOKEN
+                    </li>
+                    <li style="margin-bottom: 18px; position: relative; padding-left: 25px; font-size: 14px;">
+                        <span style="position: absolute; left: 0; color: #5865F2; font-size: 24px;">•</span>
+                        STEP 5: BOT PROVIDES YOUR TOKEN CONTRACT ADDRESS AND PUMP.FUN LINK
+                    </li>
+                </ul>
+                
+                <p style="font-size: 14px; margin-bottom: 15px;">YOUR PRIVATE KEY GIVES YOU ACCESS TO YOUR DEPLOYMENT WALLET. NEVER SHARE IT WITH ANYONE.</p>
+                <p style="font-size: 14px;">THE MINIMUM SOL DEPOSIT IS 0.01 SOL. LARGER PROJECTS MAY REQUIRE MORE LIQUIDITY.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Discord Bot Emulation - Outside modal but only visible when modal is open -->
+    <div id="discordPostPreview" style="display:none; position: fixed; top: 50%; left: 100px; transform: translateY(-50%); width: 380px; z-index: 201; background: #36393F; border-radius: 0; overflow: hidden; border: 3px solid #202225; box-shadow: 4px 4px 0 rgba(0,0,0,0.8); font-family: 'Silkscreen', monospace;">
+        <div style="display: flex; align-items: center; padding: 12px; background-color: #2F3136; border-bottom: 1px solid #202225;">
+            <div style="color: #FFF; font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">INSTADOTMEME BOT</div>
+        </div>
+        <div style="width: 100%; position: relative; background: #36393F; padding: 12px;">
+            <div style="margin-bottom: 10px; color: #5865F2; font-size: 14px;">/deploy INSTA $INSTA</div>
+            <div style="padding: 12px; background: #2F3136; border-left: 4px solid #5865F2; color: #DCDDDE; font-size: 14px; line-height: 1.5; word-break: break-word;">
+                <span style="color: #FFFFFF; display: block; margin-bottom: 8px; font-weight: bold;">TOKEN DEPLOYED SUCCESSFULLY!</span>
+                <span style="display: block; margin-bottom: 4px;">Name: INSTA</span>
+                <span style="display: block; margin-bottom: 4px;">Symbol: $INSTA</span>
+                <span style="display: block; margin-bottom: 4px;">Contract: INSTA...2f5a</span>
+                <span style="display: block; color: #5865F2;">https://pump.fun/token/INSTA</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TikTok Player Emulation -->
+    <div id="tiktokPlayer" class="tiktok-player">
+        <div class="tiktok-sound-control">🔊</div>
+        <img src="images/chairgif.webp?v=1" alt="TikTok video" class="video-content">
+        <div class="tiktok-content">
+            <div class="tiktok-meta">
+                <h3 class="tiktok-brand">@instadotmeme</h3>
+                <div class="tiktok-sound">original sound - instadotmeme</div>
+                <p class="tiktok-message">Deploy your own token with the $INSTA token service 🚀 #crypto #memecoin #instadotmeme</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instagram Player Emulation -->
+    <div id="instagramPlayer" class="instagram-player">
+        <div class="instagram-header">
+            <div class="instagram-profile">
+                <img src="images/profile picture.png" alt="instadotmeme" class="instagram-profile-pic">
+                <div class="instagram-username">instadotmeme</div>
+            </div>
+        </div>
+        <div class="instagram-media">
+            <img src="images/casino.gif" alt="Casino gif" class="instagram-image">
+        </div>
+        <div class="instagram-controls">
+            <div class="instagram-actions">
+                <svg class="instagram-icon" viewBox="0 0 24 24">
+                    <path d="M16.8196 3.40477L16.8196 3.40468L16.8105 3.40435C15.9939 3.37401 15.1837 3.55848 14.4607 3.93934C13.7415 4.31818 13.1337 4.87813 12.6974 5.56376C12.3799 6.0141 12.1595 6.38237 12.0011 6.66645C11.841 6.38254 11.6182 6.01451 11.2971 5.5646C10.8588 4.88294 10.252 4.32584 9.53521 3.94728C8.81455 3.56666 8.00746 3.37954 7.19284 3.40423L7.19283 3.40408L7.18038 3.40477C5.73422 3.48471 4.37827 4.133 3.40801 5.20836C2.44041 6.28078 1.93462 7.69124 1.99999 9.13385C2.00344 10.8131 2.73878 12.1587 3.76066 13.3486C4.54375 14.2605 5.52952 15.1172 6.516 15.9745C6.80035 16.2216 7.08476 16.4688 7.36439 16.7173C7.71256 17.0283 8.0484 17.3289 8.36875 17.6156C9.03981 18.2163 9.64287 18.7561 10.1488 19.2024C10.8808 19.8482 11.4505 20.3358 11.7281 20.5156L11.9996 20.6915L12.2713 20.516C12.5291 20.3494 13.0097 19.9415 13.7041 19.3303C14.2257 18.8712 14.8883 18.2789 15.7018 17.5517C15.9935 17.2909 16.3047 17.0128 16.6357 16.7172C16.9253 16.4597 17.2205 16.2037 17.5157 15.9477C18.4876 15.105 19.4601 14.2617 20.2346 13.3628C21.2586 12.1744 21.9965 10.8264 22 9.13385C22.0653 7.69123 21.5596 6.28078 20.592 5.20836C19.6217 4.133 18.2657 3.48471 16.8196 3.40477Z"></path>
+                </svg>
+                <svg class="instagram-icon" viewBox="0 0 24 24">
+                    <path d="M20.656 17.008C21.8711 14.9061 22.2795 12.4337 21.8048 10.0527C21.3301 7.67172 20.0048 5.54497 18.0765 4.06978C16.1482 2.59458 13.7488 1.87186 11.3266 2.0366C8.9043 2.20135 6.62486 3.24231 4.91408 4.96501C3.20329 6.68772 2.17817 8.97432 2.03024 11.3977C1.8823 13.821 2.62166 16.2153 4.1102 18.1334C5.59874 20.0514 7.73463 21.3619 10.1189 21.82C12.5031 22.2782 14.9726 21.8527 17.066 20.623L22 22L20.656 17.008Z" stroke="#e1306c" stroke-width="2"/></svg>
+                <svg class="instagram-icon" viewBox="0 0 24 24">
+                    <path d="M22 3 9.218 10.083M11.698 20.334 22 3.001H2L9.218 10.084 11.698 20.334Z" stroke="#e1306c" stroke-width="2"/></svg>
+            </div>
+            <div class="instagram-bookmark">
+                <svg class="instagram-icon" viewBox="0 0 24 24">
+                    <path d="M20 21L12 13.44L4 21V3H20V21Z" stroke="#e1306c" stroke-width="2"/></svg>
+                </div>
+            </div>
+            <div class="instagram-caption">
+                <div class="instagram-likes">42,069 likes</div>
+                <div class="instagram-username">instadotmeme</div>
+                <div class="instagram-text">Deploy your own token with the $INSTA token service 🚀 #crypto #memecoin #instadotmeme</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="client.js?v=4.2"></script>
+    <script>
+        // Force background on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.background = 'linear-gradient(135deg, #ff417a, #ff7642, #ffcb42)';
+            document.body.style.backgroundAttachment = 'fixed';
+            
+            // Load tokens from server on page load
+            fetch('/api/token-history')
+                .then(response => response.json())
+                .then(tokens => {
+                    console.log(`Loaded ${tokens.length} tokens from server`);
+                    tokens.forEach(token => {
+                        if (window.detectNewToken && token.name && (token.symbol || token.ticker)) {
+                            // Initialize global token array if needed
+                            if (!window.allTokens) {
+                                window.allTokens = [];
+                            }
+                            
+                            // Add token to global array
+                            window.allTokens.push(token);
+                            
+                            // Display token on page
+                            const tokenFeed = document.getElementById('tokenFeed');
+                            if (tokenFeed) {
+                                const card = createTokenCard({
+                                    platform: token.platform || 'instagram',
+                                    name: token.name,
+                                    symbol: token.symbol || token.ticker,
+                                    image: token.image || token.imageData,
+                                    postUrl: token.postUrl || token.instagramPost,
+                                    pumpfunUrl: token.pumpfunUrl || token.pumpFunLink,
+                                    timestamp: token.timestamp
+                                });
+                                tokenFeed.appendChild(card);
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading tokens from server:', error);
+                });
+            
+            // Make sure deploy button is visible
+            const deployButton = document.getElementById('deployButton');
+            if (deployButton) {
+                deployButton.style.display = 'block';
+                console.log('Deploy button ready');
+            }
+            
+            // Log Discord logo status
+            const discordLogo = document.querySelector('#discordGuideBtn img');
+            console.log('Discord logo src:', discordLogo ? discordLogo.src : 'Not found');
+            discordLogo.addEventListener('load', function() {
+                console.log('Discord logo loaded successfully');
+            });
+            discordLogo.addEventListener('error', function() {
+                console.error('Failed to load Discord logo');
+                // Try to reload with absolute path
+                discordLogo.src = window.location.origin + '/discordlogo.png?v=3';
+            });
+            
+            // Set up platform guide buttons
+            const instagramGuideBtn = document.getElementById('instagramGuideBtn');
+            const twitterGuideBtn = document.getElementById('twitterGuideBtn');
+            const tiktokGuideBtn = document.getElementById('tiktokGuideBtn');
+            const discordGuideBtn = document.getElementById('discordGuideBtn');
+            
+            const instagramModal = document.getElementById('instagramModal');
+            const twitterModal = document.getElementById('twitterModal');
+            const tiktokModal = document.getElementById('tiktokModal');
+            const discordModal = document.getElementById('discordModal');
+            
+            const closeButtons = document.querySelectorAll('.close-modal');
+            
+            // Instagram post preview
+            const instagramPostPreview = document.getElementById('instagramPostPreview');
+            
+            // Twitter post preview
+            const twitterPostPreview = document.getElementById('twitterPostPreview');
+            
+            // Instagram guide button
+            instagramGuideBtn.addEventListener('click', function() {
+                instagramModal.style.display = 'flex';
+                instagramPostPreview.style.display = 'block'; // Show Instagram post preview
+                playBeepSound();
+            });
+            
+            // Instagram platform button should also show the post
+            const instagramButton = document.getElementById('instagramButton');
+            if (instagramButton) {
+                instagramButton.addEventListener('click', function() {
+                    window.location.href = 'blank.html';
+                });
+            }
+            
+            // Twitter guide button
+            twitterGuideBtn.addEventListener('click', function() {
+                twitterModal.style.display = 'flex';
+                twitterPostPreview.style.display = 'block'; // Show Twitter post preview
+                playBeepSound();
+            });
+            
+            // Twitter platform button should also show the post
+            const twitterButton = document.getElementById('twitterButton');
+            if (twitterButton) {
+                twitterButton.addEventListener('click', function() {
+                    window.location.href = 'blank.html';
+                });
+            }
+            
+            // TikTok guide button
+            tiktokGuideBtn.addEventListener('click', function() {
+                tiktokModal.style.display = 'flex';
+                playBeepSound();
+            });
+            
+            // TikTok platform button
+            const tiktokButton = document.getElementById('tiktokButton');
+            if (tiktokButton) {
+                tiktokButton.addEventListener('click', function() {
+                    window.location.href = 'blank.html';
+                });
+            }
+            
+            // Discord guide button
+            discordGuideBtn.addEventListener('click', function() {
+                discordModal.style.display = 'flex';
+                playBeepSound();
+            });
+            
+            // Close buttons
+            closeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    instagramModal.style.display = 'none';
+                    twitterModal.style.display = 'none';
+                    tiktokModal.style.display = 'none';
+                    discordModal.style.display = 'none';
+                    instagramPostPreview.style.display = 'none'; // Hide Instagram post preview
+                    twitterPostPreview.style.display = 'none'; // Hide Twitter post preview
+                    playBeepSound();
+                });
+            });
+            
+            // Close modals when clicking outside content
+            [instagramModal, twitterModal, tiktokModal, discordModal].forEach(function(modal) {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        if (modal === instagramModal) {
+                            instagramPostPreview.style.display = 'none'; // Hide Instagram post preview
+                        }
+                        if (modal === twitterModal) {
+                            twitterPostPreview.style.display = 'none'; // Hide Twitter post preview
+                        }
+                        playBeepSound();
+                    }
+                });
+            });
+            
+            // TikTok player functionality
+            const tiktokPlayer = document.getElementById('tiktokPlayer');
+            
+            // Instagram player functionality
+            const instagramPlayer = document.getElementById('instagramPlayer');
+            
+            // Play beep sound
+            function playBeepSound() {
+                try {
+                    const beepSound = document.getElementById('beepSound');
+                    if (beepSound) {
+                        beepSound.play().catch(error => {
+                            console.log('Error playing sound:', error);
+                        });
+                    }
+                } catch (error) {
+                    console.log('Error with audio:', error);
+                }
+            }
+
+            // Initialize token detection and display
+            initTokenDisplay();
+            
+            // Load existing tokens from server
+            loadExistingTokens();
+            
+            // Admin console shortcut (CTRL + SHIFT + K)
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+                    e.preventDefault();
+                    window.open('admin.html', 'adminConsole', 'width=800,height=700');
+                }
+            });
+            
+            // Check for tokens from admin console
+            checkForAdminTokens();
+        });
+
+        // Function to check for tokens added via admin console
+        function checkForAdminTokens() {
+            try {
+                const tokenData = localStorage.getItem('newToken');
+                if (tokenData) {
+                    const token = JSON.parse(tokenData);
+                    console.log('Found token in localStorage:', token);
+                    
+                    // Add the token to the display
+                    if (window.detectNewToken && token.name && token.symbol) {
+                        window.detectNewToken(
+                            token.platform, 
+                            token.name, 
+                            token.symbol, 
+                            token.image, 
+                            token.postUrl, 
+                            token.pumpfunUrl
+                        );
+                        
+                        // Clear the token from localStorage to prevent duplicates on refresh
+                        localStorage.removeItem('newToken');
+                    }
+                }
+            } catch (error) {
+                console.error('Error processing admin token:', error);
+            }
+        }
+        
+        // Load existing tokens from server
+        function loadExistingTokens() {
+            console.log('Loading existing tokens from server...');
+            fetch('/api/token-history')
+                .then(response => response.json())
+                .then(tokens => {
+                    console.log(`Loaded ${tokens.length} tokens from server`);
+                    
+                    // Initialize the global tokens array if needed
+                    if (!window.allTokens) {
+                        window.allTokens = [];
+                    }
+                    
+                    // Process each token
+                    tokens.forEach(token => {
+                        // Add to the global array
+                        window.allTokens.unshift(token);
+                        
+                        // Create and add token card to display
+                        const tokenFeed = document.getElementById('tokenFeed');
+                        if (tokenFeed) {
+                            const card = createTokenCard(token);
+                            tokenFeed.appendChild(card);
+                        }
+                    });
+                    
+                    // Update pagination if it exists
+                    const pageInfo = document.querySelector('.page-info');
+                    if (pageInfo) {
+                        const totalPages = Math.ceil(window.allTokens.length / tokensPerPage) || 1;
+                        pageInfo.textContent = `PAGE 1/${totalPages}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading tokens:', error);
+                });
+        }
+
+        // Function to initialize token detection and display
+        function initTokenDisplay() {
+            const tokenFeed = document.getElementById('tokenFeed');
+            if (!tokenFeed) return;
+
+            // Make the token grid visible
+            tokenFeed.style.display = 'flex';
+
+            // Function to create a token card
+            function createTokenCard(token) {
+                const card = document.createElement('div');
+                card.className = `token-card ${token.platform.toLowerCase()}-card`;
+                // Add timestamp data attribute for automatic updates
+                if (token.timestamp) {
+                    card.setAttribute('data-timestamp', token.timestamp);
+                }
+                
+                let platformIcon = '';
+                switch(token.platform.toLowerCase()) {
+                    case 'instagram':
+                        platformIcon = 'images/instalogo.png';
+                        break;
+                    case 'twitter':
+                    case 'x':
+                        platformIcon = 'images/xlogo.png';
+                        break;
+                    case 'tiktok':
+                        platformIcon = 'images/tiktoklogo.png';
+                        break;
+                    default:
+                        platformIcon = 'images/instalogo.png';
+                }
+
+                // If token has a custom image, use that instead
+                if (token.image) {
+                    platformIcon = token.image;
+                }
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="platform-label">${token.platform}</div>
+                        <div class="token-name">${token.name}</div>
+                        <div class="token-symbol-container">
+                            <div class="token-symbol">${token.symbol}</div>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <img src="${platformIcon}" alt="${token.platform} logo" class="platform-icon">
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-buttons">
+                            <a href="${token.postUrl || '#'}" target="_blank" class="btn view-post-btn">VIEW POST</a>
+                            <a href="${token.pumpfunUrl || '#'}" target="_blank" class="btn trade-btn">TRADE</a>
+                        </div>
+                        <div class="timestamp">${formatDisplayTimestamp(token.timestamp)}</div>
+                    </div>
+                `;
+                
+                return card;
+            }
+
+            // Function to monitor new tokens (this would connect to your backend)
+            function monitorNewTokens() {
+                // In a real implementation, this would connect to a backend API
+                // that provides new token information when they're minted
+
+                console.log("Token monitoring initialized");
+                
+                // Example of how we would handle a new token detection
+                // In a real implementation, this would be triggered by your backend
+                function onNewTokenDetected(tokenData) {
+                    // Create and append the new token card
+                    const newCard = createTokenCard(tokenData);
+                    tokenFeed.prepend(newCard); // Add to the top of the feed
+                    
+                    console.log(`New token detected: ${tokenData.name} (${tokenData.symbol}) from ${tokenData.platform}`);
+                }
+
+                // This would be replaced by your real token detection logic
+                window.detectNewToken = function(platform, name, symbol, imageUrl, postUrl, pumpfunUrl) {
+                    // Use ISO timestamp for proper time tracking
+                    const timestamp = new Date().toISOString();
+                    
+                    const token = {
+                        id: `token${Date.now()}${Math.floor(Math.random() * 10000)}`,
+                        platform: platform,
+                        name: name,
+                        symbol: symbol,
+                        image: imageUrl,
+                        postUrl: postUrl,
+                        pumpfunUrl: pumpfunUrl,
+                        timestamp: timestamp
+                    };
+                    
+                    // Store token in global array for admin panel
+                    if (!window.allTokens) {
+                        window.allTokens = [];
+                    }
+                    window.allTokens.unshift(token);
+                    
+                    onNewTokenDetected(token);
+                };
+            }
+
+            // Start monitoring for new tokens
+            monitorNewTokens();
+        }
+        
+        // Function to format timestamps for display
+        function formatDisplayTimestamp(isoString) {
+            if (!isoString) return 'JUST NOW';
+            
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) { // Less than 1 minute
+                return 'JUST NOW';
+            } else if (diff < 3600000) { // Less than 1 hour
+                const minutes = Math.floor(diff / 60000);
+                return `${minutes}M AGO`;
+            } else if (diff < 86400000) { // Less than 1 day
+                const hours = Math.floor(diff / 3600000);
+                return `${hours}H AGO`;
+            } else {
+                // For older tokens, show the date
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+        }
+        
+        // Expose a function to get all tokens for admin panel
+        window.getAllTokens = function() {
+            return window.allTokens || [];
+        };
+        
+        // Update timestamps every minute
+        setInterval(function() {
+            const timestamps = document.querySelectorAll('.timestamp');
+            timestamps.forEach(function(element) {
+                const card = element.closest('.token-card');
+                if (card) {
+                    const dataTimestamp = card.getAttribute('data-timestamp');
+                    if (dataTimestamp) {
+                        element.textContent = formatDisplayTimestamp(dataTimestamp);
+                    }
+                }
+            });
+        }, 60000);
+    </script>
+</body>
+</html> 
